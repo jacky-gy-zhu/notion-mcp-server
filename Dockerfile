@@ -9,17 +9,17 @@ WORKDIR /app
 # Copy package.json and package-lock.json
 COPY package*.json ./
 
-# Install dependencies
-RUN --mount=type=cache,target=/root/.npm npm ci --ignore-scripts --omit-dev
+# Install dependencies (with cache)
+RUN --mount=type=cache,id=npm-cache,target=/root/.npm npm ci --ignore-scripts --omit-dev
 
 # Copy source code
 COPY . .
 
-# Build the package
-RUN --mount=type=cache,target=/root/.npm npm run build
+# Build the package (with cache)
+RUN --mount=type=cache,id=npm-cache,target=/root/.npm npm run build
 
-# Install package globally
-RUN --mount=type=cache,target=/root/.npm npm link
+# Install package globally (with cache)
+RUN --mount=type=cache,id=npm-cache,target=/root/.npm npm link
 
 # Minimal image for runtime
 FROM node:20-slim
